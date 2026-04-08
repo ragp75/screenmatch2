@@ -29,6 +29,6 @@ public class Produto {
                 "nome='" + nome + '\'' +
                 ", preco=" + preco +
                 ", categoria='" + categoria + '\'' +
-                '}';
+                '}' + '\n';
     }
 }

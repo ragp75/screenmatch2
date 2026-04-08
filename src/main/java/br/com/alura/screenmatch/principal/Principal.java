@@ -1,9 +1,6 @@
 package br.com.alura.screenmatch.principal;
 
-import br.com.alura.screenmatch.model.DadosEpisodio;
-import br.com.alura.screenmatch.model.DadosSerie;
-import br.com.alura.screenmatch.model.DadosTemporada;
-import br.com.alura.screenmatch.model.Episodio;
+import br.com.alura.screenmatch.model.*;
 import br.com.alura.screenmatch.service.ConsumoApi;
 import br.com.alura.screenmatch.service.ConverteDados;
 
@@ -21,7 +18,97 @@ public class Principal {
     private final String ENDERECO = "https://www.omdbapi.com/?t=";
     private final String API_KEY = "&apikey=6585022c";
 
+    public void exercisesChapter5(){
+        //exercicios cap 5
+
+        //1 - Dada a lista de números inteiros a seguir, encontre o maior número dela.
+//        List<Integer> numeros = Arrays.asList(10, 20, 30, 40, 50);
+//        System.out.println("Summing:"+numeros);
+//        var result = numeros.stream()
+//                .peek(numero -> System.out.println(numero))
+//                .collect(Collectors.summarizingInt(e->e));
+//        System.out.println("result:"+result.getSum());
+
+        //2 -Dada a lista de palavras (strings) abaixo, agrupe-as pelo seu tamanho.
+        // No código a seguir, há um exemplo prático do resultado esperado.
+//        List<String> palavras = Arrays.asList("java", "stream", "lambda", "code");
+//        // código do agrupamento
+//        var result = palavras.stream().collect(Collectors.groupingBy(String::length));
+//        System.out.println(result);
+//        // Resultado Esperado: {4=[java, code], 6=[stream, lambda]}
+
+        //3 - Dada a lista de nomes abaixo, concatene-os separados por vírgula.
+        // No código a seguir, há um exemplo prático do resultado esperado.
+//        List<String> nomes = Arrays.asList("Alice", "Bob", "Charlie");
+//        var result= nomes.stream().collect(Collectors.joining(","));
+//        System.out.println("Nomes: " + result);
+
+        //4 - Dada a lista de números inteiros abaixo,
+        // calcule a soma dos quadrados dos números pares.
+//        List<Integer> numeros = Arrays.asList(1, 2, 3, 4, 5, 6);
+//        // código da filtragem e agrupamento dos dados
+//        var result = numeros.stream()
+//                .filter(numero -> numero % 2 == 0)
+//                .peek(e->System.out.println(e+"*"+e+"="+e*e))
+//                .collect(Collectors.summarizingInt(e->e*e));
+//        System.out.println(result);
+
+        //5 - Dada uma lista de números inteiros,
+        // separe os números pares dos ímpares.
+//        List<Integer> numeros = Arrays.asList(1, 2, 3, 4, 5, 6);
+//        // código do particionamento da lista
+//        var pares = numeros.stream().filter(numero -> numero % 2 == 0).collect(Collectors.toList());
+//        var impares = numeros.stream().filter(numero -> numero % 2 != 0).collect(Collectors.toList());
+//        System.out.println("pares:"+pares.toString());
+//        System.out.println("ímpares:"+impares.toString());
+
+        List<Produto> produtos = Arrays.asList(
+                new Produto("Smartphone", 800.0, "Eletrônicos"),
+                new Produto("Notebook", 1500.0, "Eletrônicos"),
+                new Produto("Teclado", 200.0, "Eletrônicos"),
+                new Produto("Cadeira", 300.0, "Móveis"),
+                new Produto("Monitor", 900.0, "Eletrônicos"),
+                new Produto("Mesa", 700.0, "Móveis")
+        );
+        System.out.println("Dada a seguinte lista de produtos:"+produtos+"\n");
+        //6 - Dada a lista de produtos acima, agrupe-os por categoria em um Map<String, List<Produto>>.
+
+        //Map <String, <List<Produto>>
+        Map<String, List<Produto> > result6 = produtos.stream().collect(Collectors.groupingBy(Produto::getCategoria));
+        System.out.println("6 - Produtos: " + result6.toString());
+
+//        7 - Dada a lista de produtos acima, conte quantos produtos há em cada categoria e armazene em um Map<String, Long>.
+        Map<String, Long > result7 = produtos.stream().collect(Collectors.groupingBy(Produto::getCategoria, Collectors.counting()));
+        System.out.println("7 - Produtos por categoria: " + result7.toString());
+//
+//        8 - Dada a lista de produtos acima, encontre o produto mais caro de cada categoria e armazene o resultado em um Map<String, Optional<Produto>>.
+
+        Map<String, Optional<Produto> > result8 = produtos.
+                stream().
+                collect(Collectors
+                        .groupingBy(
+                                e->e.getCategoria(),
+                                Collectors.maxBy(Comparator.comparing(e->e.getPreco() ) ) ) );
+        System.out.println("8 - Produtos por categoria: " + result8.toString());
+
+//
+//        9 - Dada a lista de produtos acima, calcule o total dos preços dos produtos
+//         em cada categoria e armazene o resultado em um Map<String, Double>.
+
+        Map<String, Double> reult9 = produtos
+                .stream()
+                .collect(Collectors.groupingBy(e->e.getCategoria(), Collectors.summingDouble(e->e.getPreco())));
+        System.out.println("9 - Soma de preço por categoria: " + reult9.toString());
+
+    }
+    public void executeExercisesChapter5(){
+        exercisesChapter5();
+        System.exit(0);
+    }
     public void exibeMenu(){
+
+        executeExercisesChapter5();
+
         System.out.println("Digite o nome da série para busca");
         var nomeSerie = leitura.nextLine();
         var json = consumo.obterDados(ENDERECO + nomeSerie.replace(" ", "+") + API_KEY);
@@ -42,6 +129,8 @@ public class Principal {
         List<DadosEpisodio> dadosEpisodios = temporadas.stream()
                 .flatMap(t -> t.episodios().stream())
                 .collect(Collectors.toList());
+
+
 
 //        System.out.println("\nTop 5 episódios");
 //        dadosEpisodios.stream()
@@ -77,7 +166,20 @@ public class Principal {
                         e ->e.getTemporada(), Collectors.averagingDouble(e->e.getAvaliacao())
                 ));
 
-        System.out.println("Medias de avaliação:"+mapaMedias);
+        Map<Integer, DoubleSummaryStatistics > mapaSummaryMediasByTemporada = episodios.stream()
+                .filter(e ->e.getAvaliacao()>0)
+                .collect(Collectors.groupingBy(
+                        e->e.getTemporada(),
+                        Collectors.summarizingDouble(e->e.getAvaliacao())));
+
+        System.out.println("Medias de avaliação (por temporada):"+mapaSummaryMediasByTemporada);
+
+        DoubleSummaryStatistics estatisticasDeEpisodios = episodios.stream()
+                .filter(e ->e.getAvaliacao()>0)
+                .collect(
+                        Collectors.summarizingDouble(e->e.getAvaliacao()));
+
+        System.out.println("Medias de avaliação (total):"+estatisticasDeEpisodios);
 
 
 //        episodios.forEach(System.out::println);
@@ -97,5 +199,9 @@ public class Principal {
 //                                " Episódio: " + e.getTitulo() +
 //                                " Data lançamento: " + e.getDataLancamento().format(formatador)
 //                ));
+
+
+
+
     }
 }
